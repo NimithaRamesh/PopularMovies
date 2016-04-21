@@ -4,7 +4,6 @@ package com.nimitharamesh.popularmovies;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -15,7 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.GridView;
+import android.widget.ListView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -28,6 +27,8 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Created by nimitharamesh on 4/11/16.
@@ -42,7 +43,7 @@ public class MovieRequest extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // Hadles menu events
+        // Handles menu events
         setHasOptionsMenu(true);
     }
 
@@ -56,21 +57,36 @@ public class MovieRequest extends Fragment {
         return super.onOptionsItemSelected(item);
     }
 
-    @Nullable
+
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // The ArrayAdapter will take data from a source and
-        // use it to populate the ListView it's attached to.
+        // use it to populate the GridView it's attached to.
+
+        // Create some dummy data for the ListView.  Here's a sample weekly forecast
+        String[] data = {
+                "Mon 6/23 - Sunny - 31/17",
+                "Tue 6/24 - Foggy - 21/8",
+                "Wed 6/25 - Cloudy - 22/17",
+                "Thurs 6/26 - Rainy - 18/11",
+                "Fri 6/27 - Foggy - 21/10",
+                "Sat 6/28 - TRAPPED IN WEATHERSTATION - 23/18",
+                "Sun 6/29 - Sunny - 20/7"
+        };
+        List<String> weekForecast = new ArrayList<String>(Arrays.asList(data));
+
+
         mMovieAdapter =
                 new ArrayAdapter<String>(
                         getActivity(), // The current context (this activity)
                         R.layout.grid_item_movie, // The name of the layout ID.
                         R.id.grid_item_movie_imageview, // The ID of the textview to populate.
-                        new ArrayList<String>());
+                        weekForecast);
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
 
         // Get a reference to the ListView, and attach this adapter to it.
-        GridView gridView = (GridView) rootView.findViewById(R.id.gridview_movies);
+        ListView gridView = (ListView) rootView.findViewById(R.id.gridview_movies);
         gridView.setAdapter(mMovieAdapter);
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -91,7 +107,7 @@ public class MovieRequest extends Fragment {
 //        String location = prefs.getString(getString(R.string.pref_location_key),
 //                getString(R.string.pref_location_default));
 //        weatherTask.execute(location);
-        movieTask.execute();
+        movieTask.execute("top_rated");
     }
 
     @Override
@@ -100,7 +116,7 @@ public class MovieRequest extends Fragment {
         updateMovies();
     }
 
-    public class FetchMovieTask extends AsyncTask<Void, Void, String[]> {
+    public class FetchMovieTask extends AsyncTask<String, Void, String[]> {
 
         private final String LOG_TAG = FetchMovieTask.class.getSimpleName();
 
@@ -130,7 +146,7 @@ public class MovieRequest extends Fragment {
         }
 
         @Override
-        protected String[] doInBackground(Void... params) {
+        protected String[] doInBackground(String... params) {
 
 
             // If there's no category mentioned, there's nothing to look up.  Verify size of params.
@@ -146,7 +162,7 @@ public class MovieRequest extends Fragment {
             // Will contain the raw JSON response as a string.
             String movieJsonStr = null;
 
-            String sortOrder = "top_rated";
+            String sortOrder = params[0];
 //            String units = "metric";
 
 //            int numDays = 7;
@@ -161,7 +177,7 @@ public class MovieRequest extends Fragment {
 //                final String FORMAT_PARAM = "mode";
 //                final String UNITS_PARAM = "units";
 //                final String DAYS_PARAM = "cnt";
-                final String APPID_PARAM = "APPID";
+                final String APPID_PARAM = "api_key";
 
                 Uri buildUri = Uri.parse(MOVIES_BASE_URL).buildUpon()
                         .appendPath(sortOrder)
@@ -179,9 +195,9 @@ public class MovieRequest extends Fragment {
 //                URL url = new URL(builtUri.toString());
                 URL url = new URL(buildUri.toString());
 
-                Log.v("URL: ", url.toString());
+                Log.v(LOG_TAG, "Build URI " + buildUri.toString());
 
-                // Create the request to OpenWeatherMap, and open the connection
+                // Create the request to TheMovieDb, and open the connection
                 urlConnection = (HttpURLConnection) url.openConnection();
                 urlConnection.setRequestMethod("GET");
                 urlConnection.connect();
