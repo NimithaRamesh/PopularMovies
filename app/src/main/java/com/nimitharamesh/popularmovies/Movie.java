@@ -8,13 +8,64 @@ import android.os.Parcelable;
  */
 public class Movie implements Parcelable {
 
+    String id;
     String title;
-    int posterThumbnail;
+    String posterThumbnail;
     String overview;
     double rating;
     String releaseDate;
 
-    public Movie(String title, int poster, String overview, double rating, String date ){
+    public String getId() {
+        return this.id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getTitle() {
+        return this.title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getPosterThumbnail() {
+        return this.posterThumbnail;
+    }
+
+    public void setPosterThumbnail(String posterThumbnail) {
+        this.posterThumbnail = posterThumbnail;
+    }
+
+    public String getOverview() {
+        return this.overview;
+    }
+
+    public void setOverview(String overview) {
+        this.overview = overview;
+    }
+
+    public double getRating() {
+        return this.rating;
+    }
+
+    public void setRating(double rating) {
+        this.rating = rating;
+    }
+
+    public String getReleaseDate() {
+        return this.releaseDate;
+    }
+
+    public void setReleaseDate(String releaseDate) {
+        this.releaseDate = releaseDate;
+    }
+
+
+
+    public Movie(String title, String poster, String overview, double rating, String date ){
         this.title = title;
         this.posterThumbnail = poster;
         this.overview = overview;
@@ -22,9 +73,12 @@ public class Movie implements Parcelable {
         this.releaseDate = date;
     }
 
+    public Movie(){
+    }
+
     private Movie(Parcel in){
         title = in.readString();
-        posterThumbnail = in.readInt();
+        posterThumbnail = in.readString();
         overview = in.readString();
         rating = in.readDouble();
         releaseDate = in.readString();
@@ -42,7 +96,7 @@ public class Movie implements Parcelable {
     @Override
     public void writeToParcel(Parcel parcel, int i) {
         parcel.writeString(title);
-        parcel.writeInt(posterThumbnail);
+        parcel.writeString(posterThumbnail);
         parcel.writeString(overview);
         parcel.writeDouble(rating);
         parcel.writeString(releaseDate);

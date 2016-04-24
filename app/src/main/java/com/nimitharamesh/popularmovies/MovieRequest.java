@@ -14,7 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.ListView;
+import android.widget.GridView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -36,6 +36,8 @@ import java.util.List;
 public class MovieRequest extends Fragment {
 
     private ArrayAdapter<String> mMovieAdapter;
+
+    private GridView gridView;
 
     public MovieRequest() {
     }
@@ -82,11 +84,11 @@ public class MovieRequest extends Fragment {
                         getActivity(), // The current context (this activity)
                         R.layout.grid_item_movie, // The name of the layout ID.
                         R.id.grid_item_movie_imageview, // The ID of the textview to populate.
-                        weekForecast);
+                        new ArrayList<String>());
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
 
         // Get a reference to the ListView, and attach this adapter to it.
-        ListView gridView = (ListView) rootView.findViewById(R.id.gridview_movies);
+        gridView = (GridView) rootView.findViewById(R.id.gridview_movies);
         gridView.setAdapter(mMovieAdapter);
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -116,15 +118,16 @@ public class MovieRequest extends Fragment {
         updateMovies();
     }
 
-    public class FetchMovieTask extends AsyncTask<String, Void, String[]> {
+    public class FetchMovieTask extends AsyncTask<String, Void, ArrayList<Movie>> {
 
         private final String LOG_TAG = FetchMovieTask.class.getSimpleName();
 
-        private String[] getMovieDataFromJson(String moviesJsonStr) throws JSONException {
+        private ArrayList<Movie> getMovieDataFromJson(String moviesJsonStr) throws JSONException {
 
             // Names of JSON objects that need to be extracted
             final String TMDB_RESULTS = "results";
             final String TMDB_POSTER_PATH = "poster_path";
+            final String TMDB_ID = "id";
             final String TMDB_ORIGINAL_TITLE = "original_title";
             final String TMDB_PLOT_SYNOPSIS = "overview";
             final String TMDB_USER_RATING = "vote_average";
@@ -134,19 +137,36 @@ public class MovieRequest extends Fragment {
             JSONObject moviesJson = new JSONObject(moviesJsonStr);
             JSONArray moviesArray = moviesJson.getJSONArray(TMDB_RESULTS);
 
-            String[] resultStrs = new String[moviesArray.length()];
+            ArrayList<Movie> movieCollection = new ArrayList<>();
 
             for(int i=0; i<moviesArray.length(); i++){
-                JSONObject movieObject = moviesArray.getJSONObject(i);
-                String imageURL = movieObject.getString(TMDB_POSTER_PATH);
-                resultStrs[i] = "" + TMDB_IMAGE_URL + imageURL;
-            }
 
-            return resultStrs;
+                Movie movie = new Movie();
+
+                JSONObject movieObject = moviesArray.getJSONObject(i);
+                movie.setId(movieObject.getString(TMDB_ID));
+                movie.setTitle(movieObject.getString(TMDB_ORIGINAL_TITLE));
+                movie.setOverview(movieObject.getString(TMDB_PLOT_SYNOPSIS));
+                movie.setRating(movieObject.getDouble(TMDB_USER_RATING));
+                movie.setReleaseDate(movieObject.getString(TMDB_RELEASE_DATE));
+                String imageURL = "" + TMDB_IMAGE_URL + movieObject.getString(TMDB_POSTER_PATH);
+                movie.setPosterThumbnail(imageURL);
+
+                movieCollection.add(movie);
+
+            }
+            Log.v(LOG_TAG, "Movie Details: " + movieCollection.get(0).id + " " +
+                    movieCollection.get(0).title + " " +
+                    movieCollection.get(0).overview + " " +
+                    movieCollection.get(0).rating + " " +
+                    movieCollection.get(0).releaseDate + " " +
+                    movieCollection.get(0).posterThumbnail );
+
+            return movieCollection;
         }
 
         @Override
-        protected String[] doInBackground(String... params) {
+        protected ArrayList<Movie> doInBackground(String... params) {
 
 
             // If there's no category mentioned, there's nothing to look up.  Verify size of params.
@@ -224,6 +244,9 @@ public class MovieRequest extends Fragment {
                     return null;
                 }
                 movieJsonStr = buffer.toString();
+
+                Log.v(LOG_TAG, "Movie Data: " + movieJsonStr);
+
             } catch (IOException e) {
                 Log.e(LOG_TAG, "Error ", e);
                 // If the code didn't successfully get the weather data, there's no point in
@@ -254,14 +277,24 @@ public class MovieRequest extends Fragment {
         }
 
         @Override
-        protected void onPostExecute(String[] result) {
-            if (result != null) {
-                mMovieAdapter.clear();
-                for (String movieDetailsStr : result ) {
-                    mMovieAdapter.add(movieDetailsStr);
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected void onPostExecute(ArrayList<Movie> result) {
+            String[] urlArray = new String[result.size()];
+            if(result != null){
+                for(int i=0; i<result.size(); i++){
+                    urlArray[i] = ("http://image.tmdb.org/t/p/w185/" + result.get(i).getPosterThumbnail());
+
                 }
+                ArrayList<String> imageList = new ArrayList<String>(Arrays.asList(urlArray));
+
+                ImageAdapter adapter = new ImageAdapter(getContext(), imageList);
+                gridView.setAdapter(adapter);
+
             }
-            // New data is back from server!!
         }
     }
 
