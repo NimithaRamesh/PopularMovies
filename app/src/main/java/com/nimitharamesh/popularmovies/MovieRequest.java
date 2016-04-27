@@ -35,6 +35,8 @@ import java.util.Arrays;
  */
 public class MovieRequest extends Fragment {
 
+    private final String LOG_TAG = MovieRequest.class.getSimpleName();
+
     private final String TMDB_IMAGE_URL = "http://image.tmdb.org/t/p/w185/";
     private ArrayAdapter<String> mMovieAdapter;
 
@@ -84,6 +86,7 @@ public class MovieRequest extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
                 String movieId = movieIds[position];
+                Log.v(LOG_TAG, "Movie ID: " + movieId);
                 Intent intent = new Intent(getActivity(), DetailActivity.class)
                         .putExtra(Intent.EXTRA_TEXT, movieId);
                 startActivity(intent);

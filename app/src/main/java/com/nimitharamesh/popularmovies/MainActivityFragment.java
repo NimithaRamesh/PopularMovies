@@ -12,18 +12,18 @@ public class MainActivityFragment extends Fragment {
 //    private ArrayList<Movie> movieList;
 //
 //    Movie[] popularMovies = {
-//            new Movie("Batman", R.drawable.interstellar, "First movie", 8.9, "December 2002"),
-//            new Movie("Batman 2", R.drawable.interstellar, "Second movie", 8.9, "December 2004"),
-//            new Movie("The Dark Knight", R.drawable.interstellar, "First movie", 8.9, "December 2006"),
-//            new Movie("The Dark Knight Rises", R.drawable.interstellar, "First movie", 8.9, "December 2008"),
-//            new Movie("Batman", R.drawable.interstellar, "First movie", 8.9, "December 2002"),
-//            new Movie("Batman 2", R.drawable.interstellar, "Second movie", 8.9, "December 2004"),
-//            new Movie("The Dark Knight", R.drawable.interstellar, "First movie", 8.9, "December 2006"),
-//            new Movie("The Dark Knight Rises", R.drawable.interstellar, "First movie", 8.9, "December 2008"),
-//            new Movie("Batman", R.drawable.interstellar, "First movie", 8.9, "December 2002"),
-//            new Movie("Batman 2", R.drawable.interstellar, "Second movie", 8.9, "December 2004"),
-//            new Movie("The Dark Knight", R.drawable.interstellar, "First movie", 8.9, "December 2006"),
-//            new Movie("The Dark Knight Rises", R.drawable.interstellar, "First movie", 8.9, "December 2008")
+//            new Movie("Batman", R.drawable.poster, "First movie", 8.9, "December 2002"),
+//            new Movie("Batman 2", R.drawable.poster, "Second movie", 8.9, "December 2004"),
+//            new Movie("The Dark Knight", R.drawable.poster, "First movie", 8.9, "December 2006"),
+//            new Movie("The Dark Knight Rises", R.drawable.poster, "First movie", 8.9, "December 2008"),
+//            new Movie("Batman", R.drawable.poster, "First movie", 8.9, "December 2002"),
+//            new Movie("Batman 2", R.drawable.poster, "Second movie", 8.9, "December 2004"),
+//            new Movie("The Dark Knight", R.drawable.poster, "First movie", 8.9, "December 2006"),
+//            new Movie("The Dark Knight Rises", R.drawable.poster, "First movie", 8.9, "December 2008"),
+//            new Movie("Batman", R.drawable.poster, "First movie", 8.9, "December 2002"),
+//            new Movie("Batman 2", R.drawable.poster, "Second movie", 8.9, "December 2004"),
+//            new Movie("The Dark Knight", R.drawable.poster, "First movie", 8.9, "December 2006"),
+//            new Movie("The Dark Knight Rises", R.drawable.poster, "First movie", 8.9, "December 2008")
 //    };
 //
 //    @Override

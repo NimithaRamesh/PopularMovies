@@ -49,8 +49,8 @@ public class DetailActivity extends ActionBarActivity {
         protected final String TMDB_IMAGE_URL = "http://image.tmdb.org/t/p/w185/";
 
         Movie movie = new Movie();
-        protected String mID;
-        private ImageView mImageView;
+        private TextView mTitle;
+        private ImageView mPoster;
         private TextView mOverview;
         private TextView mRating;
         private TextView mReleaseDate;
@@ -66,33 +66,35 @@ public class DetailActivity extends ActionBarActivity {
             // The detail Activity called via intent.  Inspect the intent for movie data.
             Intent intent = getActivity().getIntent();
             if (intent != null && intent.hasExtra(Intent.EXTRA_TEXT)) {
-                mID = (String) intent.getStringExtra(Intent.EXTRA_TEXT);
-                updateMovieDetails();
+                String movieId = (String) intent.getStringExtra(Intent.EXTRA_TEXT);
+                updateMovieDetails(movieId);
             }
             View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
+            mTitle = (TextView) rootView.findViewById(R.id.detail_title);
+            mTitle.setText(movie.title);
             mOverview = (TextView) rootView.findViewById(R.id.detail_overview);
             mOverview.setText(movie.overview);
             mRating = (TextView) rootView.findViewById(R.id.detail_rating);
             mRating.setText("" + movie.rating);
             mReleaseDate = (TextView) rootView.findViewById(R.id.detail_release_date);
             mReleaseDate.setText(movie.releaseDate);
-            mImageView = (ImageView) rootView.findViewById(R.id.detail_imageview);
+            mPoster = (ImageView) rootView.findViewById(R.id.detail_imageview);
 
-            String thumbnailURL = "" + TMDB_IMAGE_URL + movie.thumbnail;
+            String posterURL = "" + TMDB_IMAGE_URL + movie.poster;
 
             Picasso.with(getContext())
-                    .load(thumbnailURL)
-                    .placeholder(R.drawable.interstellar)
-                    .into(mImageView);
+                    .load(posterURL)
+                    .placeholder(R.drawable.poster)
+                    .into(mPoster);
 
             return rootView;
 
         }
 
-        private void updateMovieDetails() {
+        private void updateMovieDetails(String id) {
             FetchDetailsTask detailsTask = new FetchDetailsTask();
 //            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
-            detailsTask.execute(mID);
+            detailsTask.execute(id);
         }
 
         public class FetchDetailsTask extends AsyncTask<String, Void, Movie> {
@@ -101,21 +103,20 @@ public class DetailActivity extends ActionBarActivity {
 
             private Movie getDetailsFromJson(String detailsJsonString) throws JSONException {
                 // Names of JSON objects that need to be extracted
-                final String TMDB_RESULTS = "backdrop_path";
-                final String TMDB_BACKDROP_PATH = "backdrop_path";
+                final String TMDB_POSTER_PATH = "poster_path";
                 final String TMDB_ORIGINAL_TITLE = "original_title";
                 final String TMDB_PLOT_SYNOPSIS = "overview";
                 final String TMDB_USER_RATING = "vote_average";
                 final String TMDB_RELEASE_DATE = "release_date";
 
                 JSONObject movieResult = new JSONObject(detailsJsonString);
-                movie.setThumbnail(movieResult.getString(TMDB_BACKDROP_PATH));
+                movie.setPoster(movieResult.getString(TMDB_POSTER_PATH));
                 movie.setTitle(movieResult.getString(TMDB_ORIGINAL_TITLE));
                 movie.setOverview(movieResult.getString(TMDB_PLOT_SYNOPSIS));
                 movie.setRating(movieResult.getDouble(TMDB_USER_RATING));
                 movie.setReleaseDate(movieResult.getString(TMDB_RELEASE_DATE));
 
-                Log.v(LOG_TAG, "Movie Details: " + movie.thumbnail + " " +
+                Log.v(LOG_TAG, "Movie Details: " + movie.poster + " " +
                         movie.title + " " +
                         movie.overview + " " +
                         movie.rating + " " +
@@ -232,7 +233,7 @@ public class DetailActivity extends ActionBarActivity {
                             movie.overview + " " +
                             movie.rating + " " +
                             movie.releaseDate + " " +
-                            movie.thumbnail);
+                            movie.poster);
                 }
             }
         }

@@ -54,8 +54,7 @@ public class ImageAdapter extends ArrayAdapter {
         String url = (String) data.get(position);
         Picasso.with(context)
                 .load(url)
-                .placeholder(R.drawable.interstellar)
-
+                .placeholder(R.drawable.poster)
                 .into((ImageView) convertView);
 
         return convertView;
