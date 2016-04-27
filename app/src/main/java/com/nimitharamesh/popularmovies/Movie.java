@@ -10,10 +10,22 @@ public class Movie implements Parcelable {
 
     String id;
     String title;
-    String posterThumbnail;
+    String poster;
     String overview;
     double rating;
     String releaseDate;
+    String thumbnail;
+
+    public Movie(){
+    }
+
+    public Movie(Movie movie) {
+        this.title = movie.title;
+        this.thumbnail = movie.thumbnail;
+        this.overview = movie.overview;
+        this.rating = movie.rating;
+        this.releaseDate = movie.releaseDate;
+    }
 
     public String getId() {
         return this.id;
@@ -31,21 +43,19 @@ public class Movie implements Parcelable {
         this.title = title;
     }
 
-    public String getPosterThumbnail() {
-        return this.posterThumbnail;
+    public String getPoster() {
+        return this.poster;
     }
 
-    public void setPosterThumbnail(String posterThumbnail) {
-        this.posterThumbnail = posterThumbnail;
+    public void setPoster(String poster) {
+        this.poster = poster;
     }
 
     public String getOverview() {
         return this.overview;
     }
 
-    public void setOverview(String overview) {
-        this.overview = overview;
-    }
+    public void setOverview(String overview) { this.overview = overview; }
 
     public double getRating() {
         return this.rating;
@@ -63,22 +73,24 @@ public class Movie implements Parcelable {
         this.releaseDate = releaseDate;
     }
 
+    public String getThumbnail() { return this.thumbnail; }
+
+    public void setThumbnail(String thumbnail) { this.thumbnail = thumbnail; }
 
 
     public Movie(String title, String poster, String overview, double rating, String date ){
         this.title = title;
-        this.posterThumbnail = poster;
+        this.poster = poster;
         this.overview = overview;
         this.rating = rating;
         this.releaseDate = date;
     }
 
-    public Movie(){
-    }
+
 
     private Movie(Parcel in){
         title = in.readString();
-        posterThumbnail = in.readString();
+        poster = in.readString();
         overview = in.readString();
         rating = in.readDouble();
         releaseDate = in.readString();
@@ -90,13 +102,13 @@ public class Movie implements Parcelable {
     }
 
     public String toString() {
-        return title + posterThumbnail + overview + " " + rating + " " + releaseDate;
+        return title + poster + overview + " " + rating + " " + releaseDate;
     }
 
     @Override
     public void writeToParcel(Parcel parcel, int i) {
         parcel.writeString(title);
-        parcel.writeString(posterThumbnail);
+        parcel.writeString(poster);
         parcel.writeString(overview);
         parcel.writeDouble(rating);
         parcel.writeString(releaseDate);

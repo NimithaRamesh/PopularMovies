@@ -1,6 +1,7 @@
 package com.nimitharamesh.popularmovies;
 
 
+import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -28,16 +29,17 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 /**
  * Created by nimitharamesh on 4/11/16.
  */
 public class MovieRequest extends Fragment {
 
+    private final String TMDB_IMAGE_URL = "http://image.tmdb.org/t/p/w185/";
     private ArrayAdapter<String> mMovieAdapter;
 
     private GridView gridView;
+    private String[] movieIds;
 
     public MovieRequest() {
     }
@@ -66,18 +68,6 @@ public class MovieRequest extends Fragment {
         // The ArrayAdapter will take data from a source and
         // use it to populate the GridView it's attached to.
 
-        // Create some dummy data for the ListView.  Here's a sample weekly forecast
-        String[] data = {
-                "Mon 6/23 - Sunny - 31/17",
-                "Tue 6/24 - Foggy - 21/8",
-                "Wed 6/25 - Cloudy - 22/17",
-                "Thurs 6/26 - Rainy - 18/11",
-                "Fri 6/27 - Foggy - 21/10",
-                "Sat 6/28 - TRAPPED IN WEATHERSTATION - 23/18",
-                "Sun 6/29 - Sunny - 20/7"
-        };
-        List<String> weekForecast = new ArrayList<String>(Arrays.asList(data));
-
 
         mMovieAdapter =
                 new ArrayAdapter<String>(
@@ -87,16 +77,16 @@ public class MovieRequest extends Fragment {
                         new ArrayList<String>());
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
 
-        // Get a reference to the ListView, and attach this adapter to it.
+        // Get a reference to the GridView, and attach this adapter to it.
         gridView = (GridView) rootView.findViewById(R.id.gridview_movies);
         gridView.setAdapter(mMovieAdapter);
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-//                String forecast = mMovieAdapter.getItem(position);
-//                Intent intent = new Intent(getActivity(), DetailActivity.class)
-//                        .putExtra(Intent.EXTRA_TEXT, forecast);
-//                startActivity(intent);
+                String movieId = movieIds[position];
+                Intent intent = new Intent(getActivity(), DetailActivity.class)
+                        .putExtra(Intent.EXTRA_TEXT, movieId);
+                startActivity(intent);
             }
         });
 
@@ -132,7 +122,6 @@ public class MovieRequest extends Fragment {
             final String TMDB_PLOT_SYNOPSIS = "overview";
             final String TMDB_USER_RATING = "vote_average";
             final String TMDB_RELEASE_DATE = "release_date";
-            final String TMDB_IMAGE_URL = "http://image.tmdb.org/t/p/w185/";
 
             JSONObject moviesJson = new JSONObject(moviesJsonStr);
             JSONArray moviesArray = moviesJson.getJSONArray(TMDB_RESULTS);
@@ -150,17 +139,11 @@ public class MovieRequest extends Fragment {
                 movie.setRating(movieObject.getDouble(TMDB_USER_RATING));
                 movie.setReleaseDate(movieObject.getString(TMDB_RELEASE_DATE));
                 String imageURL = "" + TMDB_IMAGE_URL + movieObject.getString(TMDB_POSTER_PATH);
-                movie.setPosterThumbnail(imageURL);
+                movie.setPoster(imageURL);
 
                 movieCollection.add(movie);
 
             }
-            Log.v(LOG_TAG, "Movie Details: " + movieCollection.get(0).id + " " +
-                    movieCollection.get(0).title + " " +
-                    movieCollection.get(0).overview + " " +
-                    movieCollection.get(0).rating + " " +
-                    movieCollection.get(0).releaseDate + " " +
-                    movieCollection.get(0).posterThumbnail );
 
             return movieCollection;
         }
@@ -204,15 +187,6 @@ public class MovieRequest extends Fragment {
                         .appendQueryParameter(APPID_PARAM, BuildConfig.THE_MOVIE_DATABASE_API_KEY)
                         .build();
 
-//                Uri builtUri = Uri.parse(MOVIES_BASE_URL).buildUpon()
-//                        .appendQueryParameter(QUERY_PARAM, params[0])
-//                        .appendQueryParameter(FORMAT_PARAM, format)
-//                        .appendQueryParameter(UNITS_PARAM, units)
-//                        .appendQueryParameter(DAYS_PARAM, Integer.toString(numDays))
-//                        .appendQueryParameter(APPID_PARAM, BuildConfig.OPEN_WEATHER_MAP_API_KEY)
-//                        .build();
-
-//                URL url = new URL(builtUri.toString());
                 URL url = new URL(buildUri.toString());
 
                 Log.v(LOG_TAG, "Build URI " + buildUri.toString());
@@ -284,10 +258,11 @@ public class MovieRequest extends Fragment {
         @Override
         protected void onPostExecute(ArrayList<Movie> result) {
             String[] urlArray = new String[result.size()];
+            movieIds = new String[result.size()];
             if(result != null){
                 for(int i=0; i<result.size(); i++){
-                    urlArray[i] = ("http://image.tmdb.org/t/p/w185/" + result.get(i).getPosterThumbnail());
-
+                    urlArray[i] = ("" + TMDB_IMAGE_URL + result.get(i).getPoster());
+                    movieIds[i] = result.get(i).getId();
                 }
                 ArrayList<String> imageList = new ArrayList<String>(Arrays.asList(urlArray));
 
