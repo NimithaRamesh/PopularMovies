@@ -1,10 +1,11 @@
 package com.nimitharamesh.popularmovies;
 
-
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -33,9 +34,9 @@ import java.util.Arrays;
 /**
  * Created by nimitharamesh on 4/11/16.
  */
-public class MovieRequest extends Fragment {
+public class MovieFragment extends Fragment {
 
-    private final String LOG_TAG = MovieRequest.class.getSimpleName();
+    private final String LOG_TAG = MovieFragment.class.getSimpleName();
 
     private final String TMDB_IMAGE_URL = "http://image.tmdb.org/t/p/w185/";
     private ArrayAdapter<String> mMovieAdapter;
@@ -43,7 +44,7 @@ public class MovieRequest extends Fragment {
     private GridView gridView;
     private String[] movieIds;
 
-    public MovieRequest() {
+    public MovieFragment() {
     }
 
     @Override
@@ -70,13 +71,12 @@ public class MovieRequest extends Fragment {
         // The ArrayAdapter will take data from a source and
         // use it to populate the GridView it's attached to.
 
-
-        mMovieAdapter =
-                new ArrayAdapter<String>(
+        mMovieAdapter = new ArrayAdapter<String>(
                         getActivity(), // The current context (this activity)
                         R.layout.grid_item_movie, // The name of the layout ID.
                         R.id.grid_item_movie_imageview, // The ID of the textview to populate.
                         new ArrayList<String>());
+
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
 
         // Get a reference to the GridView, and attach this adapter to it.
@@ -86,7 +86,6 @@ public class MovieRequest extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
                 String movieId = movieIds[position];
-                Log.v(LOG_TAG, "Movie ID: " + movieId);
                 Intent intent = new Intent(getActivity(), DetailActivity.class)
                         .putExtra(Intent.EXTRA_TEXT, movieId);
                 startActivity(intent);
@@ -98,11 +97,9 @@ public class MovieRequest extends Fragment {
 
     private void updateMovies() {
         FetchMovieTask movieTask = new FetchMovieTask();
-//        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
-//        String location = prefs.getString(getString(R.string.pref_location_key),
-//                getString(R.string.pref_location_default));
-//        weatherTask.execute(location);
-        movieTask.execute("top_rated");
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        String sortBy = prefs.getString(getString(R.string.pref_sort_key), "");
+        movieTask.execute(sortBy);
     }
 
     @Override
@@ -121,10 +118,6 @@ public class MovieRequest extends Fragment {
             final String TMDB_RESULTS = "results";
             final String TMDB_POSTER_PATH = "poster_path";
             final String TMDB_ID = "id";
-            final String TMDB_ORIGINAL_TITLE = "original_title";
-            final String TMDB_PLOT_SYNOPSIS = "overview";
-            final String TMDB_USER_RATING = "vote_average";
-            final String TMDB_RELEASE_DATE = "release_date";
 
             JSONObject moviesJson = new JSONObject(moviesJsonStr);
             JSONArray moviesArray = moviesJson.getJSONArray(TMDB_RESULTS);
@@ -137,10 +130,6 @@ public class MovieRequest extends Fragment {
 
                 JSONObject movieObject = moviesArray.getJSONObject(i);
                 movie.setId(movieObject.getString(TMDB_ID));
-                movie.setTitle(movieObject.getString(TMDB_ORIGINAL_TITLE));
-                movie.setOverview(movieObject.getString(TMDB_PLOT_SYNOPSIS));
-                movie.setRating(movieObject.getDouble(TMDB_USER_RATING));
-                movie.setReleaseDate(movieObject.getString(TMDB_RELEASE_DATE));
                 String imageURL = "" + TMDB_IMAGE_URL + movieObject.getString(TMDB_POSTER_PATH);
                 movie.setPoster(imageURL);
 
@@ -169,20 +158,12 @@ public class MovieRequest extends Fragment {
             String movieJsonStr = null;
 
             String sortOrder = params[0];
-//            String units = "metric";
-
-//            int numDays = 7;
 
             try {
-                // Construct the URL for the OpenWeatherMap query
-                // Possible parameters are avaiable at OWM's forecast API page, at
-                // http://openweathermap.org/API#forecast
-                final String MOVIES_BASE_URL =
-                        "http://api.themoviedb.org/3/movie/";
-//                final String QUERY_PARAM = "q";
-//                final String FORMAT_PARAM = "mode";
-//                final String UNITS_PARAM = "units";
-//                final String DAYS_PARAM = "cnt";
+                // Construct the URL for the TheMovieDb query
+                // Possible parameters are available at TMDB's API page, at
+                // https://www.themoviedb.org/documentation/api/discover
+                final String MOVIES_BASE_URL = "http://api.themoviedb.org/3/movie/";
                 final String APPID_PARAM = "api_key";
 
                 Uri buildUri = Uri.parse(MOVIES_BASE_URL).buildUpon()
@@ -191,8 +172,6 @@ public class MovieRequest extends Fragment {
                         .build();
 
                 URL url = new URL(buildUri.toString());
-
-                Log.v(LOG_TAG, "Build URI " + buildUri.toString());
 
                 // Create the request to TheMovieDb, and open the connection
                 urlConnection = (HttpURLConnection) url.openConnection();
@@ -221,8 +200,6 @@ public class MovieRequest extends Fragment {
                     return null;
                 }
                 movieJsonStr = buffer.toString();
-
-                Log.v(LOG_TAG, "Movie Data: " + movieJsonStr);
 
             } catch (IOException e) {
                 Log.e(LOG_TAG, "Error ", e);
@@ -254,11 +231,6 @@ public class MovieRequest extends Fragment {
         }
 
         @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-        }
-
-        @Override
         protected void onPostExecute(ArrayList<Movie> result) {
             String[] urlArray = new String[result.size()];
             movieIds = new String[result.size()];
@@ -275,5 +247,4 @@ public class MovieRequest extends Fragment {
             }
         }
     }
-
 }

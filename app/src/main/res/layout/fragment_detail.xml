@@ -4,7 +4,7 @@
                 android:layout_height="match_parent"
                 tools:context="com.example.android.sunshine.app.DetailActivity.DetailFragment">
 
-
+    <!--Original Title-->
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -15,6 +15,7 @@
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"/>
 
+    <!--Poster Thumbnail -->
     <ImageView
         android:layout_width="@dimen/detail_image_width"
         android:layout_height="@dimen/detail_image_height"
@@ -23,6 +24,7 @@
         android:layout_alignParentLeft="true"
         android:layout_margin="10dp"/>
 
+    <!--User Rating-->
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -35,6 +37,7 @@
         android:layout_marginRight="10dp"
         android:layout_marginBottom="10dp"/>
 
+    <!--Release Date-->
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -44,6 +47,7 @@
         android:id="@+id/detail_release_date"
         android:layout_margin="10dp"/>
 
+    <!--Plot Synopsis or Overview-->
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -51,7 +55,5 @@
         android:layout_below="@+id/detail_imageview"
         android:id="@+id/detail_overview"
         android:layout_margin="10dp"/>
-
-
 
 </RelativeLayout>

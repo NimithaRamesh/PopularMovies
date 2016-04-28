@@ -9,16 +9,15 @@ import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import com.squareup.picasso.Picasso;
-
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -42,9 +41,29 @@ public class DetailActivity extends ActionBarActivity {
         }
     }
 
-    public static class DetailFragment extends Fragment {
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if present.
+        getMenuInflater().inflate(R.menu.menu_detail, menu);
+        return true;
+    }
 
-        public static final String LOG_TAG = DetailFragment.class.getSimpleName();
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        // noinspection simplifiable if statement
+        if( id == R.id.action_settings) {
+            startActivity(new Intent(this, SettingsActivity.class));
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    public static class DetailFragment extends Fragment {
 
         protected final String TMDB_IMAGE_URL = "http://image.tmdb.org/t/p/w185/";
 
@@ -63,13 +82,16 @@ public class DetailActivity extends ActionBarActivity {
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-            // The detail Activity called via intent.  Inspect the intent for movie data.
+            // The detail Activity called via intent.  Inspect the intent for movie id.
             Intent intent = getActivity().getIntent();
             if (intent != null && intent.hasExtra(Intent.EXTRA_TEXT)) {
-                String movieId = (String) intent.getStringExtra(Intent.EXTRA_TEXT);
+                String movieId = intent.getStringExtra(Intent.EXTRA_TEXT);
+
                 updateMovieDetails(movieId);
             }
+
             View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
+
             mTitle = (TextView) rootView.findViewById(R.id.detail_title);
             mTitle.setText(movie.title);
             mOverview = (TextView) rootView.findViewById(R.id.detail_overview);
@@ -88,12 +110,10 @@ public class DetailActivity extends ActionBarActivity {
                     .into(mPoster);
 
             return rootView;
-
         }
 
         private void updateMovieDetails(String id) {
             FetchDetailsTask detailsTask = new FetchDetailsTask();
-//            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
             detailsTask.execute(id);
         }
 
@@ -115,12 +135,6 @@ public class DetailActivity extends ActionBarActivity {
                 movie.setOverview(movieResult.getString(TMDB_PLOT_SYNOPSIS));
                 movie.setRating(movieResult.getDouble(TMDB_USER_RATING));
                 movie.setReleaseDate(movieResult.getString(TMDB_RELEASE_DATE));
-
-                Log.v(LOG_TAG, "Movie Details: " + movie.poster + " " +
-                        movie.title + " " +
-                        movie.overview + " " +
-                        movie.rating + " " +
-                        movie.releaseDate );
 
                 return movie;
             }
@@ -145,7 +159,7 @@ public class DetailActivity extends ActionBarActivity {
 
                 try {
                     // Construct the URL for the TheMovieDb query
-                    // Possible parameters are avaiable at TMDB's API page, at
+                    // Possible parameters are available at TMDB's API page, at
                     // https://www.themoviedb.org/documentation/api/discover
                     final String DETAILS_BASE_URL = "http://api.themoviedb.org/3/movie/";
                     final String APPID_PARAM = "api_key";
@@ -156,8 +170,6 @@ public class DetailActivity extends ActionBarActivity {
                             .build();
 
                     URL url = new URL(buildUri.toString());
-
-                    Log.v(LOG_TAG, "Details Build URI " + buildUri.toString());
 
                     // Create the request to TheMovieDb, and open the connection
                     urlConnection = (HttpURLConnection) url.openConnection();
@@ -186,8 +198,6 @@ public class DetailActivity extends ActionBarActivity {
                         return null;
                     }
                     detailsJsonStr = buffer.toString();
-
-                    Log.v(LOG_TAG, "Movie Details: " + detailsJsonStr);
 
                 } catch (IOException e) {
                     Log.e(LOG_TAG, "Error ", e);
@@ -219,21 +229,9 @@ public class DetailActivity extends ActionBarActivity {
             }
 
             @Override
-            protected void onPreExecute() {
-                super.onPreExecute();
-            }
-
-            @Override
             protected void onPostExecute(Movie selectedMovie) {
                 if(selectedMovie != null){
                     movie = selectedMovie;
-
-                    Log.v(LOG_TAG, "Movie Details: " +
-                            movie.title + " " +
-                            movie.overview + " " +
-                            movie.rating + " " +
-                            movie.releaseDate + " " +
-                            movie.poster);
                 }
             }
         }

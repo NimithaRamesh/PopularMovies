@@ -43,9 +43,8 @@ public class ImageAdapter extends ArrayAdapter {
         return 0;
     }
 
-    // create a new ImageView for each item referenced by the Adapter
+    // Creates a new ImageView for each item referenced by the Adapter
     public View getView(int position, View convertView, ViewGroup parent) {
-        ImageView imageView;
 
         if (convertView == null) {
             convertView = inflater.inflate(R.layout.grid_item_movie, parent, false);

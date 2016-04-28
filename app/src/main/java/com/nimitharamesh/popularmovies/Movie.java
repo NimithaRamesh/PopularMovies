@@ -35,6 +35,7 @@ public class Movie {
     }
 
     /* Getters and Setters */
+
     public String getId() {
         return this.id;
     }
