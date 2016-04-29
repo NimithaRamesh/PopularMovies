@@ -98,7 +98,7 @@ public class MovieFragment extends Fragment {
     private void updateMovies() {
         FetchMovieTask movieTask = new FetchMovieTask();
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        String sortBy = prefs.getString(getString(R.string.pref_sort_key), "");
+        String sortBy = prefs.getString(getString(R.string.pref_sort_key), "top_rated");
         movieTask.execute(sortBy);
     }
 
