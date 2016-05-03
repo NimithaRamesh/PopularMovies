@@ -57,4 +57,5 @@ public class SettingsActivity extends PreferenceActivity implements Preference
         }
         return true;
     }
+
 }

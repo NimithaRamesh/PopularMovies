@@ -39,10 +39,11 @@ public class MovieFragment extends Fragment {
     private final String LOG_TAG = MovieFragment.class.getSimpleName();
 
     private final String TMDB_IMAGE_URL = "http://image.tmdb.org/t/p/w185/";
-    private ArrayAdapter<String> mMovieAdapter;
+
+    private ArrayAdapter<Movie> mMovieAdapter;
 
     private GridView gridView;
-    private String[] movieIds;
+
 
     public MovieFragment() {
     }
@@ -71,11 +72,11 @@ public class MovieFragment extends Fragment {
         // The ArrayAdapter will take data from a source and
         // use it to populate the GridView it's attached to.
 
-        mMovieAdapter = new ArrayAdapter<String>(
-                        getActivity(), // The current context (this activity)
-                        R.layout.grid_item_movie, // The name of the layout ID.
-                        R.id.grid_item_movie_imageview, // The ID of the textview to populate.
-                        new ArrayList<String>());
+        mMovieAdapter = new ArrayAdapter<Movie>(
+                getActivity(), // The current context (this activity)
+                R.layout.grid_item_movie, // The name of the layout ID.
+                R.id.grid_item_movie_imageview, // The ID of the textview to populate.
+                new ArrayList<Movie>());
 
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
 
@@ -85,9 +86,9 @@ public class MovieFragment extends Fragment {
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-                String movieId = movieIds[position];
+                Movie selectedMovie = mMovieAdapter.getItem(position);
                 Intent intent = new Intent(getActivity(), DetailActivity.class)
-                        .putExtra(Intent.EXTRA_TEXT, movieId);
+                        .putExtra("Movie", selectedMovie);
                 startActivity(intent);
             }
         });
@@ -98,7 +99,7 @@ public class MovieFragment extends Fragment {
     private void updateMovies() {
         FetchMovieTask movieTask = new FetchMovieTask();
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        String sortBy = prefs.getString(getString(R.string.pref_sort_key), "top_rated");
+        String sortBy = prefs.getString(getString(R.string.pref_sort_key), "popular");
         movieTask.execute(sortBy);
     }
 
@@ -117,7 +118,11 @@ public class MovieFragment extends Fragment {
             // Names of JSON objects that need to be extracted
             final String TMDB_RESULTS = "results";
             final String TMDB_POSTER_PATH = "poster_path";
-            final String TMDB_ID = "id";
+            final String TMDB_ORIGINAL_TITLE = "original_title";
+            final String TMDB_PLOT_SYNOPSIS = "overview";
+            final String TMDB_USER_RATING = "vote_average";
+            final String TMDB_RELEASE_DATE = "release_date";
+
 
             JSONObject moviesJson = new JSONObject(moviesJsonStr);
             JSONArray moviesArray = moviesJson.getJSONArray(TMDB_RESULTS);
@@ -126,12 +131,14 @@ public class MovieFragment extends Fragment {
 
             for(int i=0; i<moviesArray.length(); i++){
 
-                Movie movie = new Movie();
-
                 JSONObject movieObject = moviesArray.getJSONObject(i);
-                movie.setId(movieObject.getString(TMDB_ID));
+                String title = movieObject.getString(TMDB_ORIGINAL_TITLE);
+                String overview = movieObject.getString(TMDB_PLOT_SYNOPSIS);
+                Double rating = movieObject.getDouble(TMDB_USER_RATING);
+                String releaseDate = movieObject.getString(TMDB_RELEASE_DATE);
                 String imageURL = "" + TMDB_IMAGE_URL + movieObject.getString(TMDB_POSTER_PATH);
-                movie.setPoster(imageURL);
+
+                Movie movie = new Movie(title, overview, rating, releaseDate, imageURL);
 
                 movieCollection.add(movie);
 
@@ -165,13 +172,19 @@ public class MovieFragment extends Fragment {
                 // https://www.themoviedb.org/documentation/api/discover
                 final String MOVIES_BASE_URL = "http://api.themoviedb.org/3/movie/";
                 final String APPID_PARAM = "api_key";
+                final String APPEND_TO_RESPONSE = "append_to_response";
 
-                Uri buildUri = Uri.parse(MOVIES_BASE_URL).buildUpon()
+                Uri buildUri = Uri.parse(MOVIES_BASE_URL)
+                        .buildUpon()
                         .appendPath(sortOrder)
                         .appendQueryParameter(APPID_PARAM, BuildConfig.THE_MOVIE_DATABASE_API_KEY)
+//                        .appendQueryParameter(APPEND_TO_RESPONSE, "title","overview", "rating",
+//                                "releaseDate");
                         .build();
 
                 URL url = new URL(buildUri.toString());
+
+                Log.v(LOG_TAG, url.toString());
 
                 // Create the request to TheMovieDb, and open the connection
                 urlConnection = (HttpURLConnection) url.openConnection();
@@ -232,17 +245,15 @@ public class MovieFragment extends Fragment {
 
         @Override
         protected void onPostExecute(ArrayList<Movie> result) {
-            String[] urlArray = new String[result.size()];
-            movieIds = new String[result.size()];
+            Movie[] movieArray = new Movie[result.size()];
             if(result != null){
                 for(int i=0; i<result.size(); i++){
-                    urlArray[i] = ("" + TMDB_IMAGE_URL + result.get(i).getPoster());
-                    movieIds[i] = result.get(i).getId();
+                    movieArray[i] = result.get(i);
                 }
-                ArrayList<String> imageList = new ArrayList<String>(Arrays.asList(urlArray));
+                ArrayList<Movie> movieList = new ArrayList<Movie>(Arrays.asList(movieArray));
 
-                ImageAdapter adapter = new ImageAdapter(getContext(), imageList);
-                gridView.setAdapter(adapter);
+                mMovieAdapter = new MovieAdapter(getActivity(), movieList);
+                gridView.setAdapter(mMovieAdapter);
 
             }
         }
