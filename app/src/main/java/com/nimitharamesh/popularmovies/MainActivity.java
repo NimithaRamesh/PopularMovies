@@ -1,7 +1,9 @@
 package com.nimitharamesh.popularmovies;
 
+import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
@@ -16,7 +18,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         // Checks Internet connectivity
-        isInternetOn();
+        isInternetOn(getApplicationContext());
 
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
@@ -47,30 +49,18 @@ public class MainActivity extends AppCompatActivity {
 
         return super.onOptionsItemSelected(item);
     }
-    public final boolean isInternetOn() {
+    public final void isInternetOn(Context context) {
 
-        // get Connectivity Manager object to check connection
-        ConnectivityManager connec =
-                (ConnectivityManager)getSystemService(getBaseContext().CONNECTIVITY_SERVICE);
+        ConnectivityManager cm =
+                (ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
 
-        // Check for network connections
-        if ( connec.getNetworkInfo(0).getState() == android.net.NetworkInfo.State.CONNECTED ||
-                connec.getNetworkInfo(0).getState() == android.net.NetworkInfo.State.CONNECTING ||
-                connec.getNetworkInfo(1).getState() == android.net.NetworkInfo.State.CONNECTING ||
-                connec.getNetworkInfo(1).getState() == android.net.NetworkInfo.State.CONNECTED ) {
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        boolean isConnected = activeNetwork != null &&
+                activeNetwork.isConnectedOrConnecting();
 
-            // if connected with internet
+        String status = NetworkCheck.getConnectivityStatusString(context);
+        Toast.makeText(this, status, Toast.LENGTH_LONG).show();
 
-            Toast.makeText(this, " Connected to Internet", Toast.LENGTH_LONG).show();
-            return true;
 
-        } else if (
-                connec.getNetworkInfo(0).getState() == android.net.NetworkInfo.State.DISCONNECTED ||
-                        connec.getNetworkInfo(1).getState() == android.net.NetworkInfo.State.DISCONNECTED  ) {
-
-            Toast.makeText(this, " Not Internet Connection ", Toast.LENGTH_LONG).show();
-            return false;
-        }
-        return false;
     }
 }
