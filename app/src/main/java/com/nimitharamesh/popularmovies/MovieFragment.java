@@ -122,6 +122,7 @@ public class MovieFragment extends Fragment {
             final String TMDB_PLOT_SYNOPSIS = "overview";
             final String TMDB_USER_RATING = "vote_average";
             final String TMDB_RELEASE_DATE = "release_date";
+            final String TMDB_ID = "id";
 
 
             JSONObject moviesJson = new JSONObject(moviesJsonStr);
@@ -137,8 +138,9 @@ public class MovieFragment extends Fragment {
                 Double rating = movieObject.getDouble(TMDB_USER_RATING);
                 String releaseDate = movieObject.getString(TMDB_RELEASE_DATE);
                 String imageURL = "" + TMDB_IMAGE_URL + movieObject.getString(TMDB_POSTER_PATH);
+                String id = movieObject.getString(TMDB_ID);
 
-                Movie movie = new Movie(title, overview, rating, releaseDate, imageURL);
+                Movie movie = new Movie(title, overview, rating, releaseDate, imageURL, id);
 
                 movieCollection.add(movie);
 
@@ -172,14 +174,11 @@ public class MovieFragment extends Fragment {
                 // https://www.themoviedb.org/documentation/api/discover
                 final String MOVIES_BASE_URL = "http://api.themoviedb.org/3/movie/";
                 final String APPID_PARAM = "api_key";
-                final String APPEND_TO_RESPONSE = "append_to_response";
 
                 Uri buildUri = Uri.parse(MOVIES_BASE_URL)
                         .buildUpon()
                         .appendPath(sortOrder)
                         .appendQueryParameter(APPID_PARAM, BuildConfig.THE_MOVIE_DATABASE_API_KEY)
-//                        .appendQueryParameter(APPEND_TO_RESPONSE, "title","overview", "rating",
-//                                "releaseDate");
                         .build();
 
                 URL url = new URL(buildUri.toString());
@@ -246,9 +245,14 @@ public class MovieFragment extends Fragment {
         @Override
         protected void onPostExecute(ArrayList<Movie> result) {
             Movie[] movieArray = new Movie[result.size()];
+            String[] id = new String[result.size()];
             if(result != null){
                 for(int i=0; i<result.size(); i++){
                     movieArray[i] = result.get(i);
+                    id[i] = result.get(i).id;
+                }
+                for(int j=0; j<result.size(); j++){
+                    Log.v("ID: ", id[j]);
                 }
                 ArrayList<Movie> movieList = new ArrayList<Movie>(Arrays.asList(movieArray));
 
