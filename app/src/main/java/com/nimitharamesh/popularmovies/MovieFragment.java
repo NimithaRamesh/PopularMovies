@@ -244,9 +244,9 @@ public class MovieFragment extends Fragment {
 
         @Override
         protected void onPostExecute(ArrayList<Movie> result) {
-            Movie[] movieArray = new Movie[result.size()];
-            String[] id = new String[result.size()];
-            if(result != null){
+            if (result != null) {
+                Movie[] movieArray = new Movie[result.size()];
+                String[] id = new String[result.size()];
                 for(int i=0; i<result.size(); i++){
                     movieArray[i] = result.get(i);
                     id[i] = result.get(i).id;
@@ -258,7 +258,6 @@ public class MovieFragment extends Fragment {
 
                 mMovieAdapter = new MovieAdapter(getActivity(), movieList);
                 gridView.setAdapter(mMovieAdapter);
-
             }
         }
     }

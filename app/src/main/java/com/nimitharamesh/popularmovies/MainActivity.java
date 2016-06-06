@@ -1,14 +1,10 @@
 package com.nimitharamesh.popularmovies;
 
-import android.content.Context;
 import android.content.Intent;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -17,8 +13,11 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+//        Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
+//        setSupportActionBar(myToolbar);
+
         // Checks Internet connectivity
-        isInternetOn(getApplicationContext());
+//        isInternetOn(getApplicationContext());
 
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
@@ -49,18 +48,18 @@ public class MainActivity extends AppCompatActivity {
 
         return super.onOptionsItemSelected(item);
     }
-    public final void isInternetOn(Context context) {
-
-        ConnectivityManager cm =
-                (ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
-
-        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
-        boolean isConnected = activeNetwork != null &&
-                activeNetwork.isConnectedOrConnecting();
-
-        String status = NetworkCheck.getConnectivityStatusString(context);
-        Toast.makeText(this, status, Toast.LENGTH_LONG).show();
-
-
-    }
+//    public final void isInternetOn(Context context) {
+//
+//        ConnectivityManager cm =
+//                (ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
+//
+//        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+//        boolean isConnected = activeNetwork != null &&
+//                activeNetwork.isConnectedOrConnecting();
+//
+//        String status = NetworkCheck.getConnectivityStatusString(context);
+//        Toast.makeText(this, status, Toast.LENGTH_LONG).show();
+//
+//
+//    }
 }
