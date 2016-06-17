@@ -1,59 +1,64 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:tools="http://schemas.android.com/tools"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                tools:context="com.example.android.sunshine.app.DetailActivity.DetailFragment">
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context="com.example.android.sunshine.app.DetailActivity.DetailFragment">
 
-    <!--Original Title-->
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="@string/detail_title"
-        android:id="@+id/detail_title"
-        android:layout_margin="5dp"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"/>
+        <!--Original Title-->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="@string/detail_title"
+            android:id="@+id/detail_title"
+            android:layout_margin="5dp"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"/>
 
-    <!--Poster Thumbnail -->
-    <ImageView
-        android:layout_width="@dimen/detail_image_width"
-        android:layout_height="@dimen/detail_image_height"
-        android:id="@+id/detail_imageview"
-        android:layout_below="@+id/detail_title"
-        android:layout_alignParentLeft="true"
-        android:layout_margin="10dp"/>
+        <!--Poster Thumbnail -->
+        <ImageView
+            android:layout_width="@dimen/detail_image_width"
+            android:layout_height="@dimen/detail_image_height"
+            android:id="@+id/detail_imageview"
+            android:layout_below="@+id/detail_title"
+            android:layout_alignParentLeft="true"
+            android:layout_margin="10dp"/>
 
-    <!--User Rating-->
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/detail_rating"
-        android:layout_below="@+id/detail_title"
-        android:layout_toRightOf="@+id/detail_imageview"
-        android:id="@+id/detail_rating"
-        android:layout_marginTop="50dp"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
-        android:layout_marginBottom="10dp"/>
+        <!--User Rating-->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/detail_rating"
+            android:layout_below="@+id/detail_title"
+            android:layout_toRightOf="@+id/detail_imageview"
+            android:id="@+id/detail_rating"
+            android:layout_marginTop="50dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginBottom="10dp"/>
 
-    <!--Release Date-->
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/detail_release_date"
-        android:layout_below="@+id/detail_rating"
-        android:layout_toRightOf="@+id/detail_imageview"
-        android:id="@+id/detail_release_date"
-        android:layout_margin="10dp"/>
+        <!--Release Date-->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/detail_release_date"
+            android:layout_below="@+id/detail_rating"
+            android:layout_toRightOf="@+id/detail_imageview"
+            android:id="@+id/detail_release_date"
+            android:layout_margin="10dp"/>
 
-    <!--Plot Synopsis or Overview-->
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/detail_overview"
-        android:layout_below="@+id/detail_imageview"
-        android:id="@+id/detail_overview"
-        android:layout_margin="10dp"/>
+        <!--Plot Synopsis or Overview-->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/detail_overview"
+            android:layout_below="@+id/detail_imageview"
+            android:id="@+id/detail_overview"
+            android:layout_margin="10dp"/>
 
-</RelativeLayout>
+    </RelativeLayout>
+</ScrollView>
