@@ -8,6 +8,5 @@
     
     <style name="AppBarTheme">ThemeOverlay.AppCompat.ActionBar</style>
     <style name="PopupTheme">ThemeOverlay.AppCompat.Light</style>
-    ThemeOverlay.AppCompat.Light
 
 </resources>
