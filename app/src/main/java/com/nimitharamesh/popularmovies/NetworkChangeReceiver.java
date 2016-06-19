@@ -21,7 +21,10 @@ public class NetworkChangeReceiver extends BroadcastReceiver {
         String status = NetworkCheck.getConnectivityStatusString(context);
         if (statusCode == 1 || statusCode == 2) {
             Toast.makeText(context, status, Toast.LENGTH_LONG).show();
-            context.startActivity(new Intent(context, MainActivity.class));
+            Intent networkIntent = new Intent(context, MainActivity.class);
+            networkIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            context.startActivity(networkIntent);
+
         } else {
             Toast.makeText(context, status, Toast.LENGTH_LONG).show();
         }
