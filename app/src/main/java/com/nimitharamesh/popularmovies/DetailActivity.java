@@ -96,7 +96,7 @@ public class DetailActivity extends AppCompatActivity {
             mReleaseDate.setText(myMovie.releaseDate);
             ImageView mPoster = (ImageView) rootView.findViewById(R.id.detail_imageview);
 
-            String posterURL = "" + TMDB_IMAGE_URL + myMovie.poster;
+            String posterURL = myMovie.poster;
 
             Picasso.with(getContext())
                     .load(posterURL)

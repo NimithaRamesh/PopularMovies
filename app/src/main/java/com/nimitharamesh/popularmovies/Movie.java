@@ -32,10 +32,10 @@ public class Movie implements Parcelable {
     public Movie(Parcel  in) {
         id = in.readString();
         title = in.readString();
-        overview = in.readString();;
-        rating = in.readDouble();;
-        releaseDate = in.readString();;
-        poster = in.readString();;
+        overview = in.readString();
+        rating = in.readDouble();
+        releaseDate = in.readString();
+        poster = in.readString();
     }
 
     @Override
